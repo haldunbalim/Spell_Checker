@@ -35,11 +35,62 @@ for line in file.readlines():
     buzzwords.append(word)
 
 
-def is_buzzword(word):
-    for buzzword in buzzwords:
-        if buzzword in word:
-            return True
-    return False
+def make_bad_match_table(pattern):
+
+    length = len(pattern)
+    table = {}
+    for i, c in enumerate(pattern):
+        if i == length-1 and not c in table:
+            table[c] = length
+        else:
+            table[c] = length - i - 1
+
+    return table
+
+
+def boyer_moore(pattern, text):
+
+    match_table = []
+    pattern_length = len(pattern)
+    text_length = len(text)
+    if pattern_length > text_length:
+        return match_table
+
+    table = make_bad_match_table(pattern)
+    index = pattern_length - 1
+    pattern_index = pattern_length - 1
+
+    while index < text_length:
+        if pattern[pattern_index] == text[index]:
+            if pattern_index == 0:
+                match_table.append(index)
+                pattern_index = pattern_length - 1
+                index += (pattern_length * 2 - 1)
+            else:
+                pattern_index -= 1
+                index -= 1
+        else:
+            index += table.get(text[index], pattern_length)
+            pattern_index = pattern_length - 1
+
+    return len(match_table) !=0
+
+def is_buzzword(word,use_boyer_moore=False):
+    latin=latinizer(word,True)
+    if use_boyer_moore:
+        for buzzword in buzzwords:
+            if boyer_moore(buzzword,word):
+                return word
+            elif boyer_moore(buzzword,word):
+                return latin
+        return False
+    else:
+        for buzzword in buzzwords:
+            if buzzword in word:
+                return word
+            elif buzzword in latin:
+                return latin
+        return False
 
 word_vectors = KeyedVectors.load(FILE_WORD2VEC)
 
