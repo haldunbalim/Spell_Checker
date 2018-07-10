@@ -1,4 +1,7 @@
 ing
+lead
+leasing
+bddk
 mini
 e-turuncu
 turuncu
@@ -13,259 +16,259 @@ atm
 card
 eft
 tl
-türkiye 10
-türk 10
-afganistan 10
-afgan 10
-arnavutluk 10
-arnavut 10
-cezayir 10
-cezayirli 10
-angola 10
-angolalı 10
-arjantin 10
-arjantinli 10
-almanya 10
-alman 10
-avusturya 10
-avusturyalı 10
-belçika 10
-belçikalı 10
-bulgaristan 10
-bulgar 10
-ermenistan 10
-ermeni 10
-estonya 10
-estonyalı 10
-finlandiya 10
-finli 10
-fransa 10
-fransız 10
-danimarka 10
-danimarkalı 10
-avusturalya 10
-avusturalyalı 10
-azerbaycan 10
-azeri 10
-bahreyn 10
-bahreynli 10
-bolivya 10
-bolivyalı 10
-brezilya 10
-brezilyalı 10
-kanada 10
-kanadalı 10
-şili 10
-şilili 10
-küba 10
-kübalı 10
-mısır 10
-mısırlı 10
-gana 10
-ganalı 10
-honduras 10
-honduraslı 10
-hindistan 10
-hintli 10
-hırvatistan 10
-hırvat 10
-hollanda 10
-hollandalı 10
-irlanda 10
-irlandalı 10
-italya 10
-italyan 10
-endonezya 10
-endonezyalı 10
-iran 10
-iranlı 10
-ırak 10
-ıraklı 10
-israil 10
-israilli 10
-ispanya 10
-ispanyol 10
-jamaika 10
-jamaikalı 10
-japonya 10
-japon 10
-ürdün 10
-ürdünlü 10
-kenya 10
-kenyalı 10
-kosova 10
-kosovalı 10
-kuveyt 10
-kuveytli 10
-lübnan 10
-lübnanlı 10
-libya 10
-libyalı 10
-letonya 10
-letonyalı 10
-litvanya 10
-litvanyalı 10
-lüksemburg 10
-lüksemburglu 10
-makedonya 10
-makedon 10
-malezya 10
-malay 10
-meksika 10
-meksikalı 10
-macaristan 10
-macar 10
-malta 10
-maltalı 10
-polonya 10
-polonyalı 10
-portekiz 10
-portekizli 10
-romanya 10
-rumen 10
-fas 10
-faslı 10
-nijer 10
-nijerli 10
-nijerya 10
-nijeryalı 10
-umman 10
-ummanlı 10
-pakistan 10
-pakistanlı 10
-filistin 10
-filistinli 10
-panama 10
-panamalı 10
-paraguay 10
-paraguaylı 10
-peru 10
-perulu 10
-filipinler 10
-filipinli 10
-rusya 10
-iskoçya 10
-iskoç 10
-senegal 10
-senegalli 10
-singapur 10
-singapurlu 10
-somali 10
-somalili 10
-senegal 10
-senegalli 10
-sudan 10
-sudanlı 10
-slovakya 10
-slovak 10
-slovenya 10
-slovenyalı 10
-isveç 10
-isveçli 10
-isviçre 10
-isviçreli 10
-suriye 10
-suriyeli 10
-tayvan 10
-tayvanlı 10
-tayland 10
-taylandlı 10
-tunus 10
-tunuslu 10
-uruguay 10
-uruguaylı 10
-venezuela 10
-venezuelalı 10
-vietnam 10
-vietnamlı 10
-galler 10
-gallerli 10
-yemen 10
-yemenli 10
-gürcistan 10
-gürcü 10
-yunanistan 10
-yunan 10
-adana 9999
-adıyaman 9999
-afyon 9999
-ağrı 9999
-amasya 9999
-ankara 9999
-antalya 9999
-artvin 9999
-aydın 9999
-balıkesir 9999
-bilecik 9999
-bingöl 9999
-bitlis 9999
-bolu 9999
-burdur 9999
-bursa 9999
-çanakkale 9999
-çankırı 9999
-çorum 9999
-denizli 9999
-diyarbakır 9999
-edirne 9999
-elazığ 9999
-erzincan 9999
-erzurum 9999
-eskişehir 9999
-gaziantep 9999
-antep 9999
-giresun 9999
-gümüşhane 9999
-hakkari 9999
-hatay 9999
-isparta 9999
-i̇çel 9999
-i̇stanbul 9999
-i̇zmir 9999
-kars 9999
-kastamonu 9999
-kayseri 9999
-kırklareli 9999
-kırşehir 9999
-kocaeli 9999
-konya 9999
-kütahya 9999
-malatya 9999
-manisa 9999
-kahramanmaraş 9999
-maraş 9999
-mardin 9999
-muğla 9999
-nevşehir 9999
-niğde 9999
-ordu 9999
-rize 9999
-sakarya 9999
-samsun 9999
-siirt 9999
-sinop 9999
-sivas 9999
-tekirdağ 9999
-tokat 9999
-trabzon 9999
-tunceli 9999
-şanlıurfa 9999
-urfa 9999
-uşak 9999
-van 9999
-yozgat 9999
-zonguldak 9999
-aksaray 9999
-bayburt 9999
-karaman 9999
-kırıkkale 9999
-batman 9999
-şırnak 9999
-bartın 9999
-ardahan 9999
-iğdır 9999
-yalova 9999
-karabük 9999
-kilis 9999
-osmaniye 9999
-düzce 9999
+türkiye
+türk
+afganistan
+afgan
+arnavutluk
+arnavut
+cezayir
+cezayirli
+angola
+angolalı
+arjantin
+arjantinli
+almanya
+alman
+avusturya
+avusturyalı
+belçika
+belçikalı
+bulgaristan
+bulgar
+ermenistan
+ermeni
+estonya
+estonyalı
+finlandiya
+finli
+fransa
+fransız
+danimarka
+danimarkalı
+avusturalya
+avusturalyalı
+azerbaycan
+azeri
+bahreyn
+bahreynli
+bolivya
+bolivyalı
+brezilya
+brezilyalı
+kanada
+kanadalı
+şili
+şilili
+küba
+kübalı
+mısır
+mısırlı
+gana
+ganalı
+honduras
+honduraslı
+hindistan
+hintli
+hırvatistan
+hırvat
+hollanda
+hollandalı
+irlanda
+irlandalı
+italya
+italyan
+endonezya
+endonezyalı
+iran
+iranlı
+ırak
+ıraklı
+israil
+israilli
+ispanya
+ispanyol
+jamaika
+jamaikalı
+japonya
+japon
+ürdün
+ürdünlü
+kenya
+kenyalı
+kosova
+kosovalı
+kuveyt
+kuveytli
+lübnan
+lübnanlı
+libya
+libyalı
+letonya
+letonyalı
+litvanya
+litvanyalı
+lüksemburg
+lüksemburglu
+makedonya
+makedon
+malezya
+malay
+meksika
+meksikalı
+macaristan
+macar
+malta
+maltalı
+polonya
+polonyalı
+portekiz
+portekizli
+romanya
+rumen
+fas
+faslı
+nijer
+nijerli
+nijerya
+nijeryalı
+umman
+ummanlı
+pakistan
+pakistanlı
+filistin
+filistinli
+panama
+panamalı
+paraguay
+paraguaylı
+peru
+perulu
+filipinler
+filipinli
+rusya
+iskoçya
+iskoç
+senegal
+senegalli
+singapur
+singapurlu
+somali
+somalili
+senegal
+senegalli
+sudan
+sudanlı
+slovakya
+slovak
+slovenya
+slovenyalı
+isveç
+isveçli
+isviçre
+isviçreli
+suriye
+suriyeli
+tayvan
+tayvanlı
+tayland
+taylandlı
+tunus
+tunuslu
+uruguay
+uruguaylı
+venezuela
+venezuelalı
+vietnam
+vietnamlı
+galler
+gallerli
+yemen
+yemenli
+gürcistan
+gürcü
+yunanistan
+yunan
+adana
+adıyaman
+afyon
+ağrı
+amasya
+ankara
+antalya
+artvin
+aydın
+balıkesir
+bilecik
+bingöl
+bitlis
+bolu
+burdur
+bursa
+çanakkale
+çankırı
+çorum
+denizli
+diyarbakır
+edirne
+elazığ
+erzincan
+erzurum
+eskişehir
+gaziantep
+antep
+giresun
+gümüşhane
+hakkari
+hatay
+isparta
+i̇çel
+i̇stanbul
+i̇zmir
+kars
+kastamonu
+kayseri
+kırklareli
+kırşehir
+kocaeli
+konya
+kütahya
+malatya
+manisa
+kahramanmaraş
+maraş
+mardin
+muğla
+nevşehir
+niğde
+ordu
+rize
+sakarya
+samsun
+siirt
+sinop
+sivas
+tekirdağ
+tokat
+trabzon
+tunceli
+şanlıurfa
+urfa
+uşak
+van
+yozgat
+zonguldak
+aksaray
+bayburt
+karaman
+kırıkkale
+batman
+şırnak
+bartın
+ardahan
+iğdır
+yalova
+karabük
+kilis
+osmaniye
+düzce
