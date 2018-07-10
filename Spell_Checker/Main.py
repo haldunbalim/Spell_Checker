@@ -1,39 +1,17 @@
 from gensim.models import KeyedVectors
-import pandas as pd
 import numpy as np
-from collections import Counter
 import itertools
 from operator import itemgetter
-import time
 from pyxdameraulevenshtein import damerau_levenshtein_distance
 
 alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
+#key_code={'q': 0,'w': 1,'e': 2,'r': 3,'t': 4,'y': 5,'u': 6,'ı': 7,
+#'o': 8,'p': 9,'ğ': 10,'ü': 11,'a': 12,'s': 13,'d': 14,'f': 15,'g': 16,'h': 17,'j': 18,'k': 19,'l': 20,'ş': 21,'i': 22,'z': 23,
+#'x': 24,'c': 25,'v': 26,'b': 27,'n': 28,'m': 29,'ö': 30,'ç': 31}
+#turkish_chars="ğ ü ö ı ş ç Ğ Ü Ö I Ş Ç"
 consonants='bcçdfgğhjklmnprsştvyz'
 ascii_map={'c': 'ç','o': 'ö', 'u': 'ü','g': 'ğ','i': 'ı','s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
 latin_map={'s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
-
-
-FILE_WORDS_WITH_FREQUENCIES="full.txt"
-FILE_WORD2VEC="new_word2vec"
-FILE_BUZZWORDS='buzzwords.txt'
-
-# here we load dictionary with frequencies
-
-file=open(FILE_WORDS_WITH_FREQUENCIES,'r',encoding="utf-8")
-
-dict_with_frequencies = {}
-for line in file.readlines():
-    word=line.split()[0]
-    frequency=int(line.split()[1])
-    dict_with_frequencies[word]=frequency
-file.close()
-
-file=open(FILE_BUZZWORDS,'r')
-buzzwords = []
-for line in file.readlines():
-    word=line.split()[0]
-    buzzwords.append(word)
-
 
 def make_bad_match_table(pattern):
 
@@ -75,13 +53,62 @@ def boyer_moore(pattern, text):
 
     return len(match_table) !=0
 
-def is_buzzword(word,use_boyer_moore=False):
-    latin=latinizer(word,True)
+
+# here we load dictionary with frequencies
+file = open("full.txt", 'r', encoding="utf-8")
+dict_with_frequencies = {}
+
+for line in file.readlines():
+    word = line.split()[0]
+    frequency = int(line.split()[1])
+    if frequency > 15:
+        dict_with_frequencies[word] = frequency
+file.close()
+
+file = open('buzzwords.txt')
+buzzwords = []
+for line in file.readlines():
+    word = line.split()[0]
+    buzzwords.append(word)
+
+file = open('manual.txt')
+manual = {}
+for line in file.readlines():
+    manual[line.split()[0]] = line.split()[1]
+
+
+def latinizer(word, check, reverse=False):
+    if (check):
+        return ''.join(list(map(lambda x: latin_map[x] if x in latin_map else x, list(word))))
+    else:
+        return word
+
+
+def last_check(word):
+    corr = correction(word)
+    if corr != word:
+        return corr
+
+    word = deacify_wrt_sound(word)
+
+    qs = question_suffix(word, True)
+    if qs:
+        return spell_check_word(qs.split()[0]) + ' ' + qs.split()[1]
+
+    sep = seperator(word, True)
+    if (sep != word):
+        return spell_check_word(sep.split()[0]) + ' ' + spell_check_word(sep.split()[1])
+
+    return word
+
+
+def is_buzzword(word, use_boyer_moore=False):
+    latin = latinizer(word, True)
     if use_boyer_moore:
         for buzzword in buzzwords:
-            if boyer_moore(buzzword,word):
+            if boyer_moore(buzzword, word):
                 return word
-            elif boyer_moore(buzzword,word):
+            elif boyer_moore(buzzword, word):
                 return latin
         return False
     else:
@@ -92,18 +119,17 @@ def is_buzzword(word,use_boyer_moore=False):
                 return latin
         return False
 
-word_vectors = KeyedVectors.load(FILE_WORD2VEC)
 
-def question_suffix(word):
+def question_suffix(word, force=False):
     if (len(word) > 5 and word[-5:-3] in ['mı', 'mi', 'mu', 'mü']):
-        if (isCorrect(word[:-5])):
+        if (force or isCorrect(word[:-5])):
             return word[:-5] + ' ' + word[-5:]
     if word[-2:] in ['mı', 'mi', 'mu', 'mü']:
-        if (isCorrect(word[:2])):
+        if (force or isCorrect(word[:-2])):
             return word[:-2] + ' ' + word[-2:]
-    if word[-7:] in ['mısınız', 'misiniz']:
+    if word[-7:] in ['mısınız', 'misiniz', 'musunuz', 'müsünüz']:
         return word[:-7] + ' ' + word[-7:]
-    return False
+    return None
 
 
 def isCorrect(word, check_buzzwords=True):
@@ -143,6 +169,23 @@ def deascify_n_char(word, n, ls_deasc_pos_nrs):
     return ls_asc
 
 
+def deacify_wrt_sound(word):
+    thick_counter = 0
+    slim_counter = 0
+    slim_map = {'ı': 'i', 'o': 'ö', 'u': 'ü'}
+    thick_map = {'i': 'ı', 'ö': 'o', 'ü': 'u'}
+    for char in word:
+        if char == 'a':
+            thick_counter += 1
+        elif char == 'e':
+            slim_counter += 1
+
+    if slim_counter >= thick_counter:
+        return ''.join(list(map(lambda x: slim_map[x] if x in slim_map else x, list(word))))
+    elif thick_counter > slim_counter:
+        return ''.join(list(map(lambda x: thick_map[x] if x in thick_map else x, list(word))))
+
+
 def deascify(word):
     ls = []
     ls_deasc_pos_nrs = []
@@ -158,38 +201,35 @@ def deascify(word):
     return word
 
 
-def latinizer(word, check):
-    if (check):
-        return ''.join(list(map(lambda x: latin_map[x] if x in latin_map else x, list(word))))
-    else:
-        return word
-
-
-def seperator(word):
+def seperator(word, force=False):
     for i in range(len(word)):
         left = word[:i]
         right = word[i:]
-        if (isCorrect(left) and isCorrect(right)):
+        if isCorrect(left) and isCorrect(right):
             return left + " " + right
+        elif force:
+            if isCorrect(left) or isCorrect(right):
+                return left + " " + right
     return word
+
 
 def has_two_swaps(s1, s2, dld):
     d1 = {}
     d2 = {}
-    alp_set = {}
+    alp_set = set()
     changes = 0
     for i in (range(max(len(s1), len(s2)))):
         if len(s1) > i:
             if s1[i] not in d1:
                 d1[s1[i]] = 0
             d1[s1[i]] += 1
-            alp_set.append(s1[i])
+            alp_set.add(s1[i])
 
         if len(s2) > i:
             if s2[i] not in d2:
                 d2[s2[i]] = 0
             d2[s2[i]] += 1
-            alp_set.append(s2[i])
+            alp_set.add(s2[i])
 
     for char in alp_set:
         if char not in d1:
@@ -238,22 +278,40 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
+#here we load word vectors
+word_vectors = KeyedVectors.load("new_word2vec")
+
+
 def spell_check_word(word, num_total=1000, threshold_levensthein=2,
                      similiarity_threshold=0.85, max_rec=4000, firstTime=True, latin=False,
                      vector_space=word_vectors, similarity_min=0.6):
+    word = my_lower(word)
+
     if (firstTime):
-        word = my_lower(word).strip(".?*!,;:")
+        redundant = (".?*!,;:")
+        for char in redundant:
+            word = word.replace(char, '')
         if (word == ''):
             return ''
         if (len(word) == 1):
-            return word + ' '
+            return word
         word = deascify(word)
 
-    if (isCorrect(word)):
+    if word in manual:
+        return manual[word]
+
+    # check if it is a buzzword
+    buzz = is_buzzword(word)
+    if (buzz != False):
+        return buzz
+
+    # check if correct
+    if (isCorrect(word, check_buzzwords=False)):
         return latinizer(word, latin)
 
-    qs = question_suffix(word)
-    if (qs != False):
+    # checks to seperate question word
+    qs = question_suffix(word, force=False)
+    if qs:
         return qs
 
     list_close_words = []
@@ -290,7 +348,7 @@ def spell_check_word(word, num_total=1000, threshold_levensthein=2,
                 return spell_check_word(word, num_total * 2, threshold_levensthein=2, firstTime=False)
             else:
                 # a typo that is not well fitted in the vector space
-                return latinizer(correction(word), latin)
+                return latinizer(last_check(word), latin)
 
         return max(list_close_words, key=itemgetter(1))[0]
 
@@ -300,8 +358,7 @@ def spell_check_word(word, num_total=1000, threshold_levensthein=2,
 
     except KeyError:
         # a typo that has not been seen before
-        return latinizer(correction(word), latin)
-
+        return latinizer(last_check(word), latin)
 
 
 def sentence_spell_checker(sentence):
@@ -313,7 +370,5 @@ def sentence_spell_checker(sentence):
     return sentence_corrected[:-1]
 
 
-
-if __name__  == '__main__':
-    print(sentence_spell_checker('kelme'))
-
+if __name__ == '__main__':
+    print (sentence_spell_checker('kelme'))
