@@ -12,9 +12,9 @@ alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
 consonants='bcçdfgğhjklmnprsştvyz'
 ascii_map={'c': 'ç','o': 'ö', 'u': 'ü','g': 'ğ','i': 'ı','s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
 latin_map={'s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
+WORD2VEC_DIRECTORY="/Users/haldunbalim/PycharmProjects/Spell Checker V2/word2vec/"
 
 def make_bad_match_table(pattern):
-
     length = len(pattern)
     table = {}
     for i, c in enumerate(pattern):
@@ -27,7 +27,6 @@ def make_bad_match_table(pattern):
 
 
 def boyer_moore(pattern, text):
-
     match_table = []
     pattern_length = len(pattern)
     text_length = len(text)
@@ -279,25 +278,33 @@ def edits2(word):
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
 #here we load word vectors
-word_vectors = KeyedVectors.load("new_word2vec")
+word_vectors = KeyedVectors.load(WORD2VEC_DIRECTORY+"word2vec")
 
+def remove_redundant(word,redundant):
+    s=""
+    for char in word:
+        if char not in redundant:
+            s+=char
+    return s
 
 def spell_check_word(word, num_total=1000, threshold_levensthein=2,
                      similiarity_threshold=0.85, max_rec=4000, firstTime=True, latin=False,
-                     vector_space=word_vectors, similarity_min=0.6):
+                     vector_space=word_vectors, similarity_min=0.6,
+                     use_manual=True,use_deasciifier=True):
+
     word = my_lower(word)
 
     if (firstTime):
-        redundant = (".?*!,;:")
-        for char in redundant:
-            word = word.replace(char, '')
+        redundant = (".?*!,;:123456789")
+        word=remove_redundant(word,redundant)
         if (word == ''):
             return ''
         if (len(word) == 1):
             return word
-        word = deascify(word)
+        if use_deasciifier:
+            word = deascify(word)
 
-    if word in manual:
+    if use_manual and word in manual:
         return manual[word]
 
     # check if it is a buzzword
