@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="84dde746-4022-4e36-82ce-62a6a36f50f3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/Main.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Spell_Checker/Main_wp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/Main_wp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/Spell Checker - Stabile.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/buzzwords.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/full.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/manual.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/trial.py" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/trial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/correctedw2v.pkl" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main_wp.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main_wp.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Spell_Checker/Main_wp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="63" selection-start-line="63" selection-end-line="63" />
+            <state relative-caret-position="-1155">
+              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -32,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trial.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="trial.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Spell_Checker/trial.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="97" selection-start-line="97" selection-end-line="97" />
+            <state relative-caret-position="90">
+              <caret line="6" column="28" selection-start-line="6" selection-end-line="7" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -80,8 +74,8 @@
       <list>
         <option value="$PROJECT_DIR$/Spell_Checker/buzzwords.txt" />
         <option value="$PROJECT_DIR$/Spell_Checker/Main.py" />
-        <option value="$PROJECT_DIR$/Spell_Checker/trial.py" />
         <option value="$PROJECT_DIR$/Spell_Checker/full.txt" />
+        <option value="$PROJECT_DIR$/Spell_Checker/trial.py" />
         <option value="$PROJECT_DIR$/Spell_Checker/Main_wp.py" />
       </list>
     </option>
@@ -108,12 +102,6 @@
               <item name="Spell_Checker" type="b2602c69:ProjectViewProjectNode" />
               <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
               <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Spell_Checker" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
-              <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
-              <item name="dependencies" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -174,7 +162,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Spell_Checker/Main_wp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Spell_Checker/Main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -225,16 +213,16 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1853" height="1055" extended-state="7" />
+    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.24972677" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.24972677" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="5" weight="0.329718" />
       <window_info anchor="bottom" id="Version Control" order="3" />
       <window_info anchor="bottom" id="Python Console" order="0" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.329718" />
+      <window_info anchor="bottom" id="Run" order="6" visible="true" weight="0.329718" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="1" />
       <window_info id="Favorites" order="0" side_tool="true" />
@@ -252,7 +240,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="8" />
+      <option name="time" value="9" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -290,13 +278,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Spell_Checker/Main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="432" column="57" selection-start-line="432" selection-start-column="57" selection-end-line="432" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Spell_Checker/full.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="131">
@@ -304,22 +285,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Spell_Checker/trial.py">
+    <entry file="file://$PROJECT_DIR$/Spell_Checker/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="97" selection-start-line="97" selection-end-line="97" />
+        <state relative-caret-position="1518">
+          <caret line="367" lean-forward="true" selection-start-line="295" selection-end-line="367" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Spell_Checker/Main_wp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="63" selection-start-line="63" selection-end-line="63" />
+        <state relative-caret-position="-1155">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Spell_Checker/trial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="28" selection-start-line="6" selection-end-line="7" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>

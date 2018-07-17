@@ -3,10 +3,10 @@ import numpy as np
 import pandas as pd
 import time
 import itertools
+import pickle
 from operator import itemgetter
 from pyxdameraulevenshtein import damerau_levenshtein_distance
 
-import xlrd
 
 
 alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
@@ -17,7 +17,12 @@ alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
 consonants='bcçdfgğhjklmnprsştvyz'
 ascii_map={'c': 'ç','o': 'ö', 'u': 'ü','g': 'ğ','i': 'ı','s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
 latin_map={'s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
-WORD2VEC_FILE_PATH='/home/vircon/Desktop/word2vec/3_word2vec_100'
+
+DEPENDENCY_FOLDER_PATH='dependencies/'
+FREQUENCY_FILE='full.txt'
+MANUAL_FILE='manual.txt'
+BUZZWORDS_FILE='buzzwords.txt'
+SIMILARITY_MAP_FILE='similarity_map.pkl'
 
 def make_bad_match_table(pattern):
     length = len(pattern)
@@ -57,9 +62,11 @@ def boyer_moore(pattern, text):
 
     return len(match_table) !=0
 
+with open(DEPENDENCY_FOLDER_PATH+SIMILARITY_MAP_FILE,'rb') as f:
+    similarity_map=pickle.load(f)
 
 # here we load dictionary with frequencies
-file = open("full.txt", 'r', encoding="utf-8")
+file = open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r', encoding="utf-8")
 dict_with_frequencies = {}
 
 for line in file.readlines():
@@ -70,19 +77,19 @@ for line in file.readlines():
 file.close()
 
 
-file = open('buzzwords.txt')
+file = open(DEPENDENCY_FOLDER_PATH+BUZZWORDS_FILE)
 buzzwords = []
 for line in file.readlines():
     word = line.split()[0]
     buzzwords.append(word)
 
-file = open('manual.txt')
+file = open(DEPENDENCY_FOLDER_PATH+MANUAL_FILE)
 manual = {}
 for line in file.readlines():
     manual[line.split()[0]] = line.split()[1]
 
 
-def latinizer(word, check, reverse=False):
+def latinizer(word, check):
     if (check):
         return ''.join(list(map(lambda x: latin_map[x] if x in latin_map else x, list(word))))
     else:
@@ -102,6 +109,7 @@ def last_check(word):
 
     sep = seperator(word, True)
     if (sep != word):
+        #print(sep,word)
         return spell_check_word(sep.split()[0]) + ' ' + spell_check_word(sep.split()[1])
 
     return word
@@ -218,40 +226,6 @@ def seperator(word, force=False):
     return word
 
 
-def has_two_swaps(s1, s2, dld):
-    d1 = {}
-    d2 = {}
-    alp_set = set()
-    changes = 0
-    for i in (range(max(len(s1), len(s2)))):
-        if len(s1) > i:
-            if s1[i] not in d1:
-                d1[s1[i]] = 0
-            d1[s1[i]] += 1
-            alp_set.add(s1[i])
-
-        if len(s2) > i:
-            if s2[i] not in d2:
-                d2[s2[i]] = 0
-            d2[s2[i]] += 1
-            alp_set.add(s2[i])
-
-    for char in alp_set:
-        if char not in d1:
-            if char in d2:
-                changes += 1
-        elif char not in d2:
-            changes += 1
-        else:
-            if d1[char] != d2[char]:
-                changes += 1
-
-    if changes == 0:
-        if dld == 2:
-            return True
-    return changes / 2 == 2
-
-
 def correction(word):
     "Most probable spelling correction for word."
     temp = max(candidates(word), key=itemgetter(1))[0]
@@ -283,9 +257,6 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
-#here we load word vectors
-word_vectors = KeyedVectors.load(WORD2VEC_FILE_PATH)
-
 def remove_redundant(word,redundant):
     s=""
     for char in word:
@@ -293,22 +264,21 @@ def remove_redundant(word,redundant):
             s+=char
     return s
 
-def spell_check_word(word, num_total=20, threshold_levensthein=2,
-                     similiarity_threshold=0.85, max_rec=4000, firstTime=True, latin=False,
-                     vector_space=word_vectors, similarity_min=0.6,
-                     use_manual=True,use_deasciifier=True,let_deeper_search=True):
+
+def spell_check_word(word,similiarity_threshold=0.85,
+                     latin=False,similarity_min=0.6,
+                     use_manual=True,use_deasciifier=True):
 
     word = my_lower(word)
 
-    if (firstTime):
-        redundant = (".?*!,;:123456789")
-        word=remove_redundant(word,redundant)
-        if (word == ''):
-            return ''
-        if (len(word) == 1):
-            return word
-        if use_deasciifier:
-            word = deascify(word)
+    redundant = (".?*!,;:123456789")
+    word = remove_redundant(word, redundant)
+    if (word == ''):
+        return ''
+    if (len(word) == 1):
+        return word
+    if use_deasciifier:
+        word = deascify(word)
 
     if use_manual and word in manual:
         return manual[word]
@@ -325,52 +295,38 @@ def spell_check_word(word, num_total=20, threshold_levensthein=2,
     # checks to seperate question word
     qs = question_suffix(word, force=False)
     if qs:
-        return qs
+        return latinizer(qs,latin)
 
-    closest=(word,0)
+    closest = (word, 0)
+
     try:
-        similiar_words = vector_space.most_similar(word, topn=num_total)
+        similar_word_list = similarity_map[word]
 
-        for i in range(len(similiar_words)):
-            similiar_word = similiar_words[i][0]
-            similarity = similiar_words[i][1]
-            dist = damerau_levenshtein_distance(word, similiar_word)
+        if len(similar_word_list)==0:
+            return latinizer(last_check(word), latin)
 
-            if dist <= 2:
-                swaps = has_two_swaps(word, similiar_word, dist)
-            else:
-                swaps = True
+        if similar_word_list[0][1] >= similiarity_threshold and hasSameChars(similar_word_list[0][0],word) and len(word)<=4:
+            return latinizer(similar_word_list[0][0],latin)
 
-            if (similarity > similiarity_threshold and
-                    isCorrect(similiar_word) and hasSameChars(word, similiar_word) and len(word) <= 4
-                    and len(word) > 2):
-                return similiar_word
-            elif (not isCorrect(similiar_word) and np.abs(len(similiar_word) - len(word)) > threshold_levensthein):
-                continue
-            elif (not swaps and dist <= threshold_levensthein and isCorrect(similiar_word)
-                  and similarity > similarity_min):
-                if(dict_with_frequencies[similiar_word]>closest[1]):
-                    closest=(similiar_word,dict_with_frequencies[similiar_word])
+        for similar_word,similarity in similar_word_list:
+            if dict_with_frequencies[similar_word] > closest[1] and similarity >= similarity_min:
+                closest=(similar_word,dict_with_frequencies[similar_word])
 
         if (closest[1] == 0):
             # no similiar word found that fits the conditions in num_total words
-            if (let_deeper_search and num_total <= max_rec ):
-                return spell_check_word(word, num_total * 2, threshold_levensthein=2, firstTime=False)
-            else:
-                # a typo that is not well fitted in the vector space
-                return latinizer(last_check(word), latin)
-
-        return closest[0]
+           return latinizer(last_check(word), latin)
+        else:
+            return latinizer(closest[0],latin)
 
     except KeyError:
         # a typo that has not been seen before
         return latinizer(last_check(word), latin)
 
 
-def sentence_spell_checker(sentence, num_total=1000, vector_space=word_vectors,let_deeper_search=False):
+def sentence_spell_checker(sentence):
     sentence_corrected=""
     for word in sentence.split():
-        spell_checked=spell_check_word(word,num_total=num_total,vector_space=vector_space,let_deeper_search=let_deeper_search)
+        spell_checked=spell_check_word(word)
         if(spell_checked != ''):
             sentence_corrected+= spell_checked+" "
     return sentence_corrected[:-1]
@@ -402,33 +358,28 @@ def validation(fileIn,num_samples,m1,m2,name_1,name_2):
     print('There are {} differences'.format(len(new_frame)))
     return new_frame
 
-def convert(fileIn,num_samples):
+def convert(fileIn,num_samples=500,do_all=False):
     df = pd.read_excel(fileIn)
-    df = df['MESSAGE'][:num_samples]
+    if do_all:
+        df = df['MESSAGE']
+    else:
+        df = df['MESSAGE'][:num_samples]
     new_frame = pd.DataFrame(columns=['Original', 'Corrected'])
     new_frame['Original'] = df
     new_frame['Corrected'] = df
 
+    samples_done=len(new_frame)
+
     tick = time.time()
     new_frame['Corrected'] = new_frame['Corrected'].apply(lambda x: sentence_spell_checker(x))
     tock = time.time()
-    print('It took {} seconds to convert {} sentences'.format(tock - tick, num_samples))
+    print('It took {} seconds to convert {} sentences'.format(tock - tick, samples_done))
 
     new_frame.to_excel('/home/vircon/Desktop/Check.xlsx')
     return new_frame
 
 
 if __name__ == '__main__':
-    #convert('/home/vircon/Desktop/ing bank.xls',500)
+    convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
     #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
-    df=pd.read_excel('/home/vircon/Desktop/Check.xlsx')
-    new_frame=pd.DataFrame(columns=['Original','Main','wp'])
-    new_frame['Original']=df['Original']
-    tick=time.time()
-    new_frame['Main'] = df['Original'].apply(lambda x: sentence_spell_checker(x))
-    tock=time.time()
-    print(tock-tick)
-    new_frame['wp'] = df['Corrected']
-    new_frame=new_frame[new_frame['Main'] != new_frame['wp']]
-    print('There are {} differences'.format(len(new_frame)))
-    new_frame.to_excel('/home/vircon/Desktop/Check_comparison.xlsx')
+    #print(spell_check_word('zman'))
