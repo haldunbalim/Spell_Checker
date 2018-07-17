@@ -1,6 +1,7 @@
 ing
 lead
 leasing
+internet
 bddk
 code
 findex

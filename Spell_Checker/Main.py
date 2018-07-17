@@ -86,7 +86,7 @@ for line in file.readlines():
 file = open(DEPENDENCY_FOLDER_PATH+MANUAL_FILE)
 manual = {}
 for line in file.readlines():
-    manual[line.split()[0]] = line.split()[1]
+    manual[line.split()[0]] = line[line.find(' ')+1:]
 
 
 def latinizer(word, check):
@@ -96,10 +96,12 @@ def latinizer(word, check):
         return word
 
 
-def last_check(word):
-    corr = correction(word)
-    if corr != word:
-        return corr
+def last_check(word,use_norvig=True):
+
+    if use_norvig:
+        corr = correction(word)
+        if corr != word:
+            return corr
 
     word = deacify_wrt_sound(word)
 
@@ -214,8 +216,22 @@ def deascify(word):
     return word
 
 
-def seperator(word, force=False):
-    for i in range(1,len(word)-1):
+def pattern(num):
+    ls = []
+    j = int(num / 2) - 1
+    k = int(num / 2) + 1
+
+    ls.append(int(num / 2))
+
+    while j != -1 and k != num:
+        ls.append(j)
+        ls.append(k)
+        j -= 1
+        k += 1
+    return ls
+
+def seperator(word,force=False):
+    for i in pattern(len(word)):
         left = word[:i]
         right = word[i:]
         if isCorrect(left) and isCorrect(right):
@@ -225,11 +241,10 @@ def seperator(word, force=False):
                 return left + " " + right
     return word
 
-
 def correction(word):
     "Most probable spelling correction for word."
     temp = max(candidates(word), key=itemgetter(1))[0]
-    return temp if len(temp) != 1 else seperator(word)
+    return temp if len(temp) != 1 else seperator(word   )
 
 
 def candidates(word):
@@ -271,7 +286,7 @@ def spell_check_word(word,similiarity_threshold=0.85,
 
     word = my_lower(word)
 
-    redundant = (".?*!,;:123456789")
+    redundant = (".?*!,;:0123456789")
     word = remove_redundant(word, redundant)
     if (word == ''):
         return ''
@@ -375,11 +390,11 @@ def convert(fileIn,num_samples=500,do_all=False):
     tock = time.time()
     print('It took {} seconds to convert {} sentences'.format(tock - tick, samples_done))
 
-    new_frame.to_excel('/home/vircon/Desktop/Check.xlsx')
+    new_frame.to_excel('/home/vircon/Desktop/Seperator.xlsx')
     return new_frame
 
 
 if __name__ == '__main__':
-    convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
+    convert('/home/vircon/Desktop/ing bank.xls',num_samples=500)
     #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
     #print(spell_check_word('zman'))
