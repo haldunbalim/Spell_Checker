@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="84dde746-4022-4e36-82ce-62a6a36f50f3" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Spell_Checker/trial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/buzzwords.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/buzzwords.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Spell_Checker/full.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/full.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/Main_wp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/Main_wp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/Spell Checker - Stabile.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/buzzwords.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/full.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/manual.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Spell_Checker/trial.py" beforeDir="false" afterPath="$PROJECT_DIR$/Spell_Checker/trial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/correctedw2v.pkl" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,12 +19,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="Main_wp.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Spell_Checker/Main_wp.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2109">
-              <caret line="262" selection-start-line="262" selection-end-line="317" selection-end-column="49" />
+            <state relative-caret-position="393">
+              <caret line="63" selection-start-line="63" selection-end-line="63" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -64,6 +67,9 @@
       <find>last</find>
       <find>ankara</find>
       <find>lüleburgaz</find>
+      <find>SIMILARITY_MAP_FILE_PATH</find>
+      <find>SIMILARITY_MAP_FILE</find>
+      <find>DEPENDENCY_FOLDER_PATH</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -73,14 +79,14 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Spell_Checker/buzzwords.txt" />
-        <option value="$PROJECT_DIR$/Spell_Checker/Main_wp.py" />
         <option value="$PROJECT_DIR$/Spell_Checker/Main.py" />
         <option value="$PROJECT_DIR$/Spell_Checker/trial.py" />
         <option value="$PROJECT_DIR$/Spell_Checker/full.txt" />
+        <option value="$PROJECT_DIR$/Spell_Checker/Main_wp.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="17" />
     <option name="y" value="226" />
     <option name="width" value="1754" />
@@ -102,6 +108,12 @@
               <item name="Spell_Checker" type="b2602c69:ProjectViewProjectNode" />
               <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
               <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Spell_Checker" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
+              <item name="Spell_Checker" type="462c0819:PsiDirectoryNode" />
+              <item name="dependencies" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -131,7 +143,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.trial">
+  <component name="RunManager" selected="Python.Main_wp">
     <configuration name="Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Spell_Checker" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -157,9 +169,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$USER_HOME$/venv/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Spell_Checker" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Spell_Checker/Main_wp.py" />
@@ -175,9 +187,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$USER_HOME$/venv/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Spell_Checker" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Spell_Checker/trial.py" />
@@ -193,9 +205,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Main_wp" />
         <item itemvalue="Python.trial" />
         <item itemvalue="Python.Main" />
-        <item itemvalue="Python.Main_wp" />
       </list>
     </recent_temporary>
   </component>
@@ -213,24 +225,25 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <frame x="67" y="25" width="1853" height="1055" extended-state="7" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.24972677" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.24972677" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="5" weight="0.329718" />
-      <window_info anchor="bottom" id="Run" order="6" weight="0.329718" />
       <window_info anchor="bottom" id="Version Control" order="3" />
       <window_info anchor="bottom" id="Python Console" order="0" />
+      <window_info active="true" anchor="bottom" id="Run" order="6" visible="true" weight="0.329718" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="1" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
       <window_info id="Favorites" order="0" side_tool="true" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="4" />
+      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
     </layout>
   </component>
@@ -243,6 +256,26 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Spell_Checker/Main_wp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3825">
+          <caret line="262" selection-start-line="262" selection-end-line="317" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Spell_Checker/trial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1395">
+          <caret line="97" selection-start-line="97" selection-end-line="97" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$USER_HOME$/venv/lib/python3.6/site-packages/pandas/core/series.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="466">
@@ -261,9 +294,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="429">
           <caret line="432" column="57" selection-start-line="432" selection-start-column="57" selection-end-line="432" selection-end-column="57" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -286,8 +316,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Spell_Checker/Main_wp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2109">
-          <caret line="262" selection-start-line="262" selection-end-line="317" selection-end-column="49" />
+        <state relative-caret-position="393">
+          <caret line="63" selection-start-line="63" selection-end-line="63" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>

@@ -17,7 +17,11 @@ alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
 consonants='bcçdfgğhjklmnprsştvyz'
 ascii_map={'c': 'ç','o': 'ö', 'u': 'ü','g': 'ğ','i': 'ı','s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
 latin_map={'s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
-SIMILARITY_MAP_FILE_PATH='/home/vircon/Desktop/correctedw2v.pkl'
+DEPENDENCY_FOLDER_PATH='dependencies/'
+FREQUENCY_FILE='full.txt'
+MANUAL_FILE='manual.txt'
+BUZZWORDS_FILE='buzzwords.txt'
+SIMILARITY_MAP_FILE='similarity_map.pkl'
 
 def make_bad_match_table(pattern):
     length = len(pattern)
@@ -57,11 +61,11 @@ def boyer_moore(pattern, text):
 
     return len(match_table) !=0
 
-with open(SIMILARITY_MAP_FILE_PATH,'rb') as f:
+with open(DEPENDENCY_FOLDER_PATH+SIMILARITY_MAP_FILE,'rb') as f:
     similarity_map=pickle.load(f)
 
 # here we load dictionary with frequencies
-file = open("full.txt", 'r', encoding="utf-8")
+file = open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r', encoding="utf-8")
 dict_with_frequencies = {}
 
 for line in file.readlines():
@@ -72,13 +76,13 @@ for line in file.readlines():
 file.close()
 
 
-file = open('buzzwords.txt')
+file = open(DEPENDENCY_FOLDER_PATH+BUZZWORDS_FILE)
 buzzwords = []
 for line in file.readlines():
     word = line.split()[0]
     buzzwords.append(word)
 
-file = open('manual.txt')
+file = open(DEPENDENCY_FOLDER_PATH+MANUAL_FILE)
 manual = {}
 for line in file.readlines():
     manual[line.split()[0]] = line.split()[1]
