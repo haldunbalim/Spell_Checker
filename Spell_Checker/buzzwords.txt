@@ -2,6 +2,10 @@ ing
 lead
 leasing
 bddk
+code
+findex
+teknosa
+facebook
 mini
 e-turuncu
 turuncu

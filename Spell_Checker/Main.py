@@ -1,8 +1,13 @@
 from gensim.models import KeyedVectors
 import numpy as np
+import pandas as pd
+import time
 import itertools
 from operator import itemgetter
 from pyxdameraulevenshtein import damerau_levenshtein_distance
+
+import xlrd
+
 
 alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
 #key_code={'q': 0,'w': 1,'e': 2,'r': 3,'t': 4,'y': 5,'u': 6,'ı': 7,
@@ -12,7 +17,7 @@ alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
 consonants='bcçdfgğhjklmnprsştvyz'
 ascii_map={'c': 'ç','o': 'ö', 'u': 'ü','g': 'ğ','i': 'ı','s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
 latin_map={'s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
-WORD2VEC_DIRECTORY="/Users/haldunbalim/PycharmProjects/Spell Checker V2/word2vec/"
+WORD2VEC_FILE_PATH='/home/vircon/Desktop/word2vec/3_word2vec_100'
 
 def make_bad_match_table(pattern):
     length = len(pattern)
@@ -63,6 +68,7 @@ for line in file.readlines():
     if frequency > 15:
         dict_with_frequencies[word] = frequency
 file.close()
+
 
 file = open('buzzwords.txt')
 buzzwords = []
@@ -201,7 +207,7 @@ def deascify(word):
 
 
 def seperator(word, force=False):
-    for i in range(len(word)):
+    for i in range(1,len(word)-1):
         left = word[:i]
         right = word[i:]
         if isCorrect(left) and isCorrect(right):
@@ -278,7 +284,7 @@ def edits2(word):
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
 #here we load word vectors
-word_vectors = KeyedVectors.load(WORD2VEC_DIRECTORY+"word2vec")
+word_vectors = KeyedVectors.load(WORD2VEC_FILE_PATH)
 
 def remove_redundant(word,redundant):
     s=""
@@ -287,10 +293,10 @@ def remove_redundant(word,redundant):
             s+=char
     return s
 
-def spell_check_word(word, num_total=1000, threshold_levensthein=2,
+def spell_check_word(word, num_total=20, threshold_levensthein=2,
                      similiarity_threshold=0.85, max_rec=4000, firstTime=True, latin=False,
                      vector_space=word_vectors, similarity_min=0.6,
-                     use_manual=True,use_deasciifier=True):
+                     use_manual=True,use_deasciifier=True,let_deeper_search=True):
 
     word = my_lower(word)
 
@@ -321,8 +327,7 @@ def spell_check_word(word, num_total=1000, threshold_levensthein=2,
     if qs:
         return qs
 
-    list_close_words = []
-
+    closest=(word,0)
     try:
         similiar_words = vector_space.most_similar(word, topn=num_total)
 
@@ -342,40 +347,88 @@ def spell_check_word(word, num_total=1000, threshold_levensthein=2,
                 return similiar_word
             elif (not isCorrect(similiar_word) and np.abs(len(similiar_word) - len(word)) > threshold_levensthein):
                 continue
-            elif ((len(word) >= 3 and len(similiar_word) >= 3) and
-                  word[0] != similiar_word[0] and word[1] != similiar_word[1] and word[2] != similiar_word[2]):
-                continue
             elif (not swaps and dist <= threshold_levensthein and isCorrect(similiar_word)
                   and similarity > similarity_min):
-                list_close_words.append((similiar_word, dict_with_frequencies[similiar_word]))
+                if(dict_with_frequencies[similiar_word]>closest[1]):
+                    closest=(similiar_word,dict_with_frequencies[similiar_word])
 
-        if (len(list_close_words) == 0):
+        if (closest[1] == 0):
             # no similiar word found that fits the conditions in num_total words
-            if (num_total <= max_rec):
+            if (let_deeper_search and num_total <= max_rec ):
                 return spell_check_word(word, num_total * 2, threshold_levensthein=2, firstTime=False)
             else:
                 # a typo that is not well fitted in the vector space
                 return latinizer(last_check(word), latin)
 
-        return max(list_close_words, key=itemgetter(1))[0]
-
-        # if you want to see the list comment the top and uncomment the bot
-        # list_close_words.sort(key=lambda x: x[1], reverse=True)
-        # return list_close_words[0][0]
+        return closest[0]
 
     except KeyError:
         # a typo that has not been seen before
         return latinizer(last_check(word), latin)
 
 
-def sentence_spell_checker(sentence):
+def sentence_spell_checker(sentence, num_total=1000, vector_space=word_vectors,let_deeper_search=False):
     sentence_corrected=""
     for word in sentence.split():
-        spell_checked=spell_check_word(word,vector_space=word_vectors)
+        spell_checked=spell_check_word(word,num_total=num_total,vector_space=vector_space,let_deeper_search=let_deeper_search)
         if(spell_checked != ''):
             sentence_corrected+= spell_checked+" "
     return sentence_corrected[:-1]
 
 
+def validation(fileIn,num_samples,m1,m2,name_1,name_2):
+    df=pd.read_excel(fileIn)
+    df=df['MESSAGE'][:num_samples]
+    new_frame=pd.DataFrame(columns=['Original',name_1,name_2])
+    new_frame['Original']=df
+    new_frame[name_1]=df
+    new_frame[name_2]=df
+
+
+    tick=time.time()
+    new_frame[name_1]=new_frame[name_1].apply(lambda x: m1(x))
+    tock=time.time()
+    print('It took {} seconds for m1 to convert {} sentences'.format(tock-tick,num_samples))
+
+
+    tick=time.time()
+    new_frame[name_2]=new_frame[name_2].apply(lambda x: m2(x))
+    tock = time.time()
+    print('It took {} seconds for m2 to convert {} sentences'.format(tock - tick, num_samples))
+
+
+    new_frame=new_frame[new_frame[name_1]!=new_frame[name_2]]
+    new_frame.to_excel('/home/vircon/Desktop/Comparison.xlsx')
+    print('There are {} differences'.format(len(new_frame)))
+    return new_frame
+
+def convert(fileIn,num_samples):
+    df = pd.read_excel(fileIn)
+    df = df['MESSAGE'][:num_samples]
+    new_frame = pd.DataFrame(columns=['Original', 'Corrected'])
+    new_frame['Original'] = df
+    new_frame['Corrected'] = df
+
+    tick = time.time()
+    new_frame['Corrected'] = new_frame['Corrected'].apply(lambda x: sentence_spell_checker(x))
+    tock = time.time()
+    print('It took {} seconds to convert {} sentences'.format(tock - tick, num_samples))
+
+    new_frame.to_excel('/home/vircon/Desktop/Check.xlsx')
+    return new_frame
+
+
 if __name__ == '__main__':
-    print (sentence_spell_checker('kelme'))
+    #convert('/home/vircon/Desktop/ing bank.xls',500)
+    #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
+    df=pd.read_excel('/home/vircon/Desktop/Check.xlsx')
+    new_frame=pd.DataFrame(columns=['Original','Main','wp'])
+    new_frame['Original']=df['Original']
+    tick=time.time()
+    new_frame['Main'] = df['Original'].apply(lambda x: sentence_spell_checker(x))
+    tock=time.time()
+    print(tock-tick)
+    new_frame['wp'] = df['Corrected']
+    new_frame=new_frame[new_frame['Main'] != new_frame['wp']]
+    print('There are {} differences'.format(len(new_frame)))
+    new_frame.to_excel('/home/vircon/Desktop/Check_comparison.xlsx')
