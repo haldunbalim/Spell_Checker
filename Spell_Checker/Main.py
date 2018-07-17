@@ -1,19 +1,12 @@
-from gensim.models import KeyedVectors
 import numpy as np
 import pandas as pd
 import time
 import itertools
 import pickle
 from operator import itemgetter
-from pyxdameraulevenshtein import damerau_levenshtein_distance
-
 
 
 alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
-#key_code={'q': 0,'w': 1,'e': 2,'r': 3,'t': 4,'y': 5,'u': 6,'ı': 7,
-#'o': 8,'p': 9,'ğ': 10,'ü': 11,'a': 12,'s': 13,'d': 14,'f': 15,'g': 16,'h': 17,'j': 18,'k': 19,'l': 20,'ş': 21,'i': 22,'z': 23,
-#'x': 24,'c': 25,'v': 26,'b': 27,'n': 28,'m': 29,'ö': 30,'ç': 31}
-#turkish_chars="ğ ü ö ı ş ç Ğ Ü Ö I Ş Ç"
 consonants='bcçdfgğhjklmnprsştvyz'
 ascii_map={'c': 'ç','o': 'ö', 'u': 'ü','g': 'ğ','i': 'ı','s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
 latin_map={'s': 'ş','ç': 'c','ö': 'o', 'ü': 'u','ğ': 'g','ı': 'i','ş': 's'}
@@ -22,7 +15,7 @@ DEPENDENCY_FOLDER_PATH='dependencies/'
 FREQUENCY_FILE='full.txt'
 MANUAL_FILE='manual.txt'
 BUZZWORDS_FILE='buzzwords.txt'
-SIMILARITY_MAP_FILE='similarity_map.pkl'
+SIMILARITY_MAP_FILE='similarity_typos_map.pkl'
 
 def make_bad_match_table(pattern):
     length = len(pattern)
@@ -397,4 +390,3 @@ def convert(fileIn,num_samples=500,do_all=False):
 if __name__ == '__main__':
     convert('/home/vircon/Desktop/ing bank.xls',num_samples=500)
     #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
-    #print(spell_check_word('zman'))
