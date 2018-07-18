@@ -3,6 +3,9 @@ lead
 leasing
 internet
 bddk
+kkb
+bes
+iban
 code
 findex
 teknosa

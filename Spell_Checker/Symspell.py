@@ -1,4 +1,5 @@
 import numpy as np
+from pyxdameraulevenshtein import damerau_levenshtein_distance
 
 DEPENDENCY_FOLDER_PATH='dependencies/'
 FREQUENCY_FILE='full.txt'
@@ -23,36 +24,14 @@ def generate_deletes(string, max_distance):
 
     return deletes
 
-def levenshtein(string1, string2):
-    if len(string1) < len(string2): return levenshtein(string2, string1)
-    if len(string2) == 0: return len(string1)
-
-    arr_string1 = np.array(list(string1))
-    arr_string2 = np.array(list(string2))
-
-    last_row = np.arange(arr_string2.size + 1)
-    for s in arr_string1:
-        current_row = last_row + 1
-
-        current_row[1:] = np.minimum(current_row[1:],
-                                     np.add(last_row[:-1], arr_string2 != s))
-
-        # Deletion (string2 grows shorter than string1):
-        current_row[1:] = np.minimum(current_row[1:],
-                                     current_row[0:-1] + 1)
-
-        last_row = current_row
-
-    return last_row[-1]
-
-def build():
+def build(min=15):
     typo_dictionary={}
     with open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r') as file:
         lines = file.readlines()
         for line in lines:
             w, f = line.split()
             f = int(f)
-            if f > 15:
+            if f > min:
                 if w in typo_dictionary:
                     typo_dictionary[w] = (typo_dictionary[w][0], f)
                 else:
@@ -90,7 +69,7 @@ def correct(string,typo_dictionary):
                     if len(q_item) == len(string):
                         item_dist = len(sc_item) - len(q_item)
 
-                    item_dist = levenshtein(sc_item, string)
+                    item_dist = damerau_levenshtein_distance(sc_item, string)
 
                     if item_dist > min_correct_len:
                         pass

@@ -14,7 +14,7 @@ FREQUENCY_FILE='full.txt'
 MANUAL_FILE='manual.txt'
 BUZZWORDS_FILE='buzzwords.txt'
 SIMILARITY_MAP_FILE='similarity_typos_map.pkl'
-USE_PICKLE_FOR_SYMSPELL=False
+USE_PICKLE_FOR_SYMSPELL=True
 TYPO_DICTIONARY_SYMSPELL_FILE='/home/vircon/Desktop/trial.pkl'
 
 
@@ -62,7 +62,10 @@ with open(DEPENDENCY_FOLDER_PATH+SIMILARITY_MAP_FILE,'rb') as f:
 
 if USE_PICKLE_FOR_SYMSPELL:
     with open(TYPO_DICTIONARY_SYMSPELL_FILE, 'rb') as f:
+        tick = time.time()
         typo_dict = pickle.load(f)
+        tock = time.time()
+        print('It took {} seconds to load the typo dictionary for symspell'.format(tock - tick))
 else:
     tick=time.time()
     typo_dict=build()
@@ -120,7 +123,10 @@ def is_buzzword(word, use_boyer_moore=False):
 
 
 def question_suffix(word, force=False):
-    if (len(word) > 5 and word[-5:-3] in ['mı', 'mi', 'mu', 'mü']):
+    quest_suffixes = ['muyum', 'müyüm', 'miyim', 'mıyım', 'musun', 'müsün', 'misin', 'mısın', 'mudur', 'müdür', 'midir',
+                      'mıdır', 'muyuz', 'müyüz', 'miyiz', 'mıyız', 'mular', 'müler', 'miler', 'mılar']
+
+    if (len(word) > 5 and word[-5:] in quest_suffixes):
         if (force or isCorrect(word[:-5])):
             return word[:-5] + ' ' + word[-5:]
     if word[-2:] in ['mı', 'mi', 'mu', 'mü']:
@@ -231,8 +237,8 @@ def last_check(word, use_exception_handler=True):
         if corr != word:
             return corr
 
-    word = deacify_wrt_sound(word)
-    qs = question_suffix(word, True)
+    sound_fixed = deacify_wrt_sound(word)
+    qs = question_suffix(sound_fixed, True)
     if qs:
         return spell_check_word(qs.split()[0]) + ' ' + qs.split()[1]
 
@@ -253,35 +259,36 @@ def remove_redundant(word,redundant):
 
 
 def spell_check_word(word,similiarity_threshold=0.85,latin=False,similarity_min=0.6,
-                     use_manual=True,use_deasciifier=True):
-
-    word = my_lower(word)
-
-    redundant = (".?*!,;:0123456789")
-    word = remove_redundant(word, redundant)
-    if (word == ''):
-        return ''
-    if (len(word) == 1):
-        return word
-    if use_deasciifier:
-        word = deascify(word)
+                     use_manual=True,use_deasciifier=True,firstTime=True):
+    if firstTime:
+        word = my_lower(word)
+        redundant = ("0123456789")
+        word = remove_redundant(word, redundant)
+        if (word == ''):
+            return ''
+        if (len(word) == 1):
+            return word
+        if use_deasciifier:
+            word = deascify(word)
 
     if use_manual and word in manual:
-        return manual[word]
+        return manual[word][:-1]
+
+    # check if correct
+    if (isCorrect(word, check_buzzwords=False)):
+        return latinizer(word, latin)
+
 
     # check if it is a buzzword
     buzz = is_buzzword(word)
     if (buzz != False):
         return buzz
 
-    # check if correct
-    if (isCorrect(word, check_buzzwords=False)):
-        return latinizer(word, latin)
-
     # checks to seperate question word
     qs = question_suffix(word, force=False)
     if qs:
-        return latinizer(qs,latin)
+        root,suffix=qs.split()
+        return latinizer(spell_check_word(root,firstTime=False),latin)+' '+latinizer(suffix,latin)
 
     closest = (word, 0)
 
@@ -308,14 +315,48 @@ def spell_check_word(word,similiarity_threshold=0.85,latin=False,similarity_min=
         # a typo that has not been seen before
         return latinizer(last_check(word), latin)
 
+def my_split(sentence,redundant='.,?:;!'):
+    for char in redundant:
+        sentence=sentence.replace(char,' ')
+    return sentence.split()
 
-def sentence_spell_checker(sentence):
+
+def fix(sentence):
+    fixed_sentence=''
+    words=sentence.split()
+    last=False
+    for i in range(len(words)-1):
+        if last:
+            last=False
+            continue
+        elif words[i+1] not in ['ne','de','da'] and isCorrect(words[i]+words[i+1], check_buzzwords=False):
+            candidate=words[i]+words[i+1]
+            qs=question_suffix(candidate)
+            if qs:
+                fixed_sentence += qs+' '
+            else:
+                fixed_sentence += candidate+' '
+            last=True
+        else:
+            fixed_sentence += words[i] +' '
+            last=False
+    if last:
+        return fixed_sentence[:-1]
+    else:
+        return fixed_sentence+words[-1]
+
+
+def sentence_spell_checker(sentence,fixer=True):
     sentence_corrected=""
-    for word in sentence.split():
+    for word in my_split(sentence):
         spell_checked=spell_check_word(word)
         if(spell_checked != ''):
             sentence_corrected+= spell_checked+" "
-    return sentence_corrected[:-1]
+
+    if fixer and len(sentence_corrected.split()) >=2:
+        return fix(sentence_corrected[:-1])
+    else:
+        return sentence_corrected[:-1]
 
 
 def validation(fileIn,num_samples,m1,m2,name_1,name_2):
@@ -357,7 +398,7 @@ def convert(fileIn,num_samples=500,do_all=False):
     samples_done=len(new_frame)
 
     tick = time.time()
-    new_frame['Corrected'] = new_frame['Corrected'].apply(lambda x: sentence_spell_checker(x))
+    new_frame['Corrected'] = new_frame['Corrected'].apply(lambda x: sentence_spell_checker(x,fixer=True))
     tock = time.time()
     print('It took {} seconds to convert {} sentences'.format(tock - tick, samples_done))
 
@@ -366,5 +407,11 @@ def convert(fileIn,num_samples=500,do_all=False):
 
 
 if __name__ == '__main__':
-    convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
+    #convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
     #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
+    #spell_check_word('redi')
+    df=pd.read_excel('/home/vircon/Desktop/Seperator.xlsx')
+    df['lev_self']=df['Original'].apply(lambda x:sentence_spell_checker(x))
+    df=df[df['lev_self']!=df['Corrected']]
+    print(len(df))
+    df.to_excel('/home/vircon/Desktop/Seperator2.xlsx')
