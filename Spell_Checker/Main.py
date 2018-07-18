@@ -122,21 +122,6 @@ def is_buzzword(word, use_boyer_moore=False):
         return False
 
 
-def question_suffix(word, force=False):
-    quest_suffixes = ['muyum', 'müyüm', 'miyim', 'mıyım', 'musun', 'müsün', 'misin', 'mısın', 'mudur', 'müdür', 'midir',
-                      'mıdır', 'muyuz', 'müyüz', 'miyiz', 'mıyız', 'mular', 'müler', 'miler', 'mılar']
-
-    if (len(word) > 5 and word[-5:] in quest_suffixes):
-        if (force or isCorrect(word[:-5])):
-            return word[:-5] + ' ' + word[-5:]
-    if word[-2:] in ['mı', 'mi', 'mu', 'mü']:
-        if (force or isCorrect(word[:-2])):
-            return word[:-2] + ' ' + word[-2:]
-    if word[-7:] in ['mısınız', 'misiniz', 'musunuz', 'müsünüz']:
-        return word[:-7] + ' ' + word[-7:]
-    return None
-
-
 def isCorrect(word, check_buzzwords=True):
     if check_buzzwords:
         return word in dict_with_frequencies or word.isdigit() or is_buzzword(word)
@@ -206,30 +191,47 @@ def deascify(word):
     return word
 
 
-def pattern(num):
-    ls = []
-    j = int(num / 2) - 1
-    k = int(num / 2) + 1
+def question_suffix(word, force=False):
+    quest_suffixes = ['muyum', 'müyüm', 'miyim', 'mıyım', 'musun', 'müsün', 'misin', 'mısın', 'mudur', 'müdür', 'midir',
+                      'mıdır', 'muyuz', 'müyüz', 'miyiz', 'mıyız', 'mular', 'müler', 'miler', 'mılar']
 
-    ls.append(int(num / 2))
+    if (len(word) > 5 and word[-5:] in quest_suffixes):
+        if (force or isCorrect(word[:-5])):
+            return word[:-5] + ' ' + word[-5:]
+    if word[-2:] in ['mı', 'mi', 'mu', 'mü']:
+        if (force or isCorrect(word[:-2])):
+            return word[:-2] + ' ' + word[-2:]
+    if word[-7:] in ['mısınız', 'misiniz', 'musunuz', 'müsünüz']:
+        return word[:-7] + ' ' + word[-7:]
+    return None
 
-    while j != -1 and k != num:
-        ls.append(j)
-        ls.append(k)
-        j -= 1
-        k += 1
-    return ls
 
-def seperator(word,force=False):
-    for i in pattern(len(word)):
+
+def seperator(word):
+    ls_both_cand=[]
+    ls_single_cand=[]
+    last_len=0
+    for i in range(2,len(word)-2):
         left = word[:i]
         right = word[i:]
-        if isCorrect(left) and isCorrect(right):
-            return left + " " + right
-        elif force:
-            if isCorrect(left) or isCorrect(right):
-                return left + " " + right
+        deascified_left=deascify(left)
+        deascified_right=deascify(right)
+        if (isCorrect(left) or deascified_left!=left) and (isCorrect(right) or deascified_right!=right):
+            ls_both_cand.append(deascified_left + " " + deascified_right)
+        elif (isCorrect(left) or deascified_left!=left) or (isCorrect(right) or deascified_right!=right):
+            if len(deascified_left)-last_len <=3 or last_len== 0:
+                last_len=len(deascified_left)
+                ls_single_cand.append((deascified_left , deascified_right))
+            else:
+                break
+
+    if len(ls_both_cand) !=0:
+        return ls_both_cand[-1]
+    if len(ls_single_cand) !=0:
+        l,r=ls_single_cand[-1]
+        return spell_check_word(l)+' '+spell_check_word(r)
     return word
+
 
 def last_check(word, use_exception_handler=True):
     if use_exception_handler:
@@ -242,10 +244,9 @@ def last_check(word, use_exception_handler=True):
     if qs:
         return spell_check_word(qs.split()[0]) + ' ' + qs.split()[1]
 
-    sep = seperator(word, True)
+    sep = seperator(word)
     if (sep != word):
-        # print(sep,word)
-        return spell_check_word(sep.split()[0]) + ' ' + spell_check_word(sep.split()[1])
+        return sep
 
     return word
 
@@ -402,16 +403,10 @@ def convert(fileIn,num_samples=500,do_all=False):
     tock = time.time()
     print('It took {} seconds to convert {} sentences'.format(tock - tick, samples_done))
 
-    new_frame.to_excel('/home/vircon/Desktop/Seperator.xlsx')
+    new_frame.to_excel('/home/vircon/Desktop/Spell_Checker_Output.xlsx')
     return new_frame
 
 
 if __name__ == '__main__':
-    #convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
-    #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
-    #spell_check_word('redi')
-    df=pd.read_excel('/home/vircon/Desktop/Seperator.xlsx')
-    df['lev_self']=df['Original'].apply(lambda x:sentence_spell_checker(x))
-    df=df[df['lev_self']!=df['Corrected']]
-    print(len(df))
-    df.to_excel('/home/vircon/Desktop/Seperator2.xlsx')
+    convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
+

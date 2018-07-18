@@ -1,9 +1,19 @@
 import numpy as np
+import pickle
 from pyxdameraulevenshtein import damerau_levenshtein_distance
 
 DEPENDENCY_FOLDER_PATH='dependencies/'
 FREQUENCY_FILE='full.txt'
 
+
+"""
+TYPO_DICTIONARY_SYMSPELL_FILE = '/home/vircon/Desktop/trial.pkl'
+LOAD_PICKLE = False
+
+if LOAD_PICKLE:
+    with open(TYPO_DICTIONARY_SYMSPELL_FILE, 'rb') as f:
+        typo_dict = pickle.load(f)
+"""
 
 threshold_levensthein=2
 
@@ -24,7 +34,7 @@ def generate_deletes(string, max_distance):
 
     return deletes
 
-def build(min=15):
+def build(min=15,save=False):
     typo_dictionary={}
     with open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r') as file:
         lines = file.readlines()
@@ -43,6 +53,10 @@ def build(min=15):
                         typo_dictionary[d][0].append(w)
                     else:
                         typo_dictionary[d] = ([w], 0)
+
+    if save:
+        with open(TYPO_DICTIONARY_SYMSPELL_FILE,'wb') as f:
+            pickle.dump(typo_dictionary,f,protocol=pickle.HIGHEST_PROTOCOL)
 
     return typo_dictionary
 
@@ -90,6 +104,3 @@ def best(string,typo_dictionary):
         return outlist[0][0]
     except:
         return string
-
-if __name__ =='__main__':
-    print(best('kelme',typo_dictionary))
