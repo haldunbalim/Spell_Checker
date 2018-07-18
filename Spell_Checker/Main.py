@@ -1,10 +1,8 @@
 import numpy as np
 import pandas as pd
-import time
-import itertools
-import pickle
+import time, itertools, pickle
 from operator import itemgetter
-
+from Symspell import best,build
 
 alphabet="q w e r t y u ı o p ğ ü a s d f g h j k l ş i z x c v b n m ö ç"
 consonants='bcçdfgğhjklmnprsştvyz'
@@ -16,6 +14,9 @@ FREQUENCY_FILE='full.txt'
 MANUAL_FILE='manual.txt'
 BUZZWORDS_FILE='buzzwords.txt'
 SIMILARITY_MAP_FILE='similarity_typos_map.pkl'
+USE_PICKLE_FOR_SYMSPELL=False
+TYPO_DICTIONARY_SYMSPELL_FILE='/home/vircon/Desktop/trial.pkl'
+
 
 def make_bad_match_table(pattern):
     length = len(pattern)
@@ -55,16 +56,27 @@ def boyer_moore(pattern, text):
 
     return len(match_table) !=0
 
+
 with open(DEPENDENCY_FOLDER_PATH+SIMILARITY_MAP_FILE,'rb') as f:
     similarity_map=pickle.load(f)
+
+if USE_PICKLE_FOR_SYMSPELL:
+    with open(TYPO_DICTIONARY_SYMSPELL_FILE, 'rb') as f:
+        typo_dict = pickle.load(f)
+else:
+    tick=time.time()
+    typo_dict=build()
+    tock = time.time()
+    print('It took {} seconds to prepare the typo dictionary for symspell'.format(tock-tick))
+
 
 # here we load dictionary with frequencies
 file = open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r', encoding="utf-8")
 dict_with_frequencies = {}
 
 for line in file.readlines():
-    word = line.split()[0]
-    frequency = int(line.split()[1])
+    word,frequency = line.split()
+    frequency=int(frequency)
     if frequency > 15:
         dict_with_frequencies[word] = frequency
 file.close()
@@ -87,27 +99,6 @@ def latinizer(word, check):
         return ''.join(list(map(lambda x: latin_map[x] if x in latin_map else x, list(word))))
     else:
         return word
-
-
-def last_check(word,use_norvig=True):
-
-    if use_norvig:
-        corr = correction(word)
-        if corr != word:
-            return corr
-
-    word = deacify_wrt_sound(word)
-
-    qs = question_suffix(word, True)
-    if qs:
-        return spell_check_word(qs.split()[0]) + ' ' + qs.split()[1]
-
-    sep = seperator(word, True)
-    if (sep != word):
-        #print(sep,word)
-        return spell_check_word(sep.split()[0]) + ' ' + spell_check_word(sep.split()[1])
-
-    return word
 
 
 def is_buzzword(word, use_boyer_moore=False):
@@ -234,36 +225,24 @@ def seperator(word,force=False):
                 return left + " " + right
     return word
 
-def correction(word):
-    "Most probable spelling correction for word."
-    temp = max(candidates(word), key=itemgetter(1))[0]
-    return temp if len(temp) != 1 else seperator(word   )
+def last_check(word, use_exception_handler=True):
+    if use_exception_handler:
+        corr = best(word,typo_dict)
+        if corr != word:
+            return corr
 
+    word = deacify_wrt_sound(word)
+    qs = question_suffix(word, True)
+    if qs:
+        return spell_check_word(qs.split()[0]) + ' ' + qs.split()[1]
 
-def candidates(word):
-    "Generate possible spelling corrections for word."
-    return known([word]) or known(edits1(word)) or known(edits2(word)) or [word]
+    sep = seperator(word, True)
+    if (sep != word):
+        # print(sep,word)
+        return spell_check_word(sep.split()[0]) + ' ' + spell_check_word(sep.split()[1])
 
+    return word
 
-def known(words):
-    "The subset of `words` that appear in the dictionary of WORDS."
-    return set((w, dict_with_frequencies[w]) for w in words if w in dict_with_frequencies)
-
-
-def edits1(word):
-    "All edits that are one edit away from `word`."
-    letters = 'abcçdefgğhıijklmnoöprsştuüvyz'
-    splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
-    deletes = [L + R[1:] for L, R in splits if R]
-    transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R) > 1]
-    replaces = [L + c + R[1:] for L, R in splits if R for c in letters]
-    inserts = [L + c + R for L, R in splits for c in letters]
-    return set(deletes + transposes + replaces + inserts)
-
-
-def edits2(word):
-    "All edits that are two edits away from `word`."
-    return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
 def remove_redundant(word,redundant):
     s=""
@@ -273,8 +252,7 @@ def remove_redundant(word,redundant):
     return s
 
 
-def spell_check_word(word,similiarity_threshold=0.85,
-                     latin=False,similarity_min=0.6,
+def spell_check_word(word,similiarity_threshold=0.85,latin=False,similarity_min=0.6,
                      use_manual=True,use_deasciifier=True):
 
     word = my_lower(word)
@@ -388,5 +366,5 @@ def convert(fileIn,num_samples=500,do_all=False):
 
 
 if __name__ == '__main__':
-    convert('/home/vircon/Desktop/ing bank.xls',num_samples=500)
+    convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
     #validation('/home/vircon/Desktop/ing bank.xls',500,sentence_spell_checker,sentence_spell_checker_1,name_1='100_1000',name_2='100_50')
