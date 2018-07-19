@@ -8,13 +8,12 @@ ATTENTION_WORDS_FILE='attention_words.txt'
 MAXIMUM_VALUE=9999999
 TYPO_DICTIONARY_SYMSPELL_FILE = '/home/vircon/Desktop/trial.pkl'
 
-"""
-LOAD_PICKLE = False
+LOAD_PICKLE = True
 
 if LOAD_PICKLE:
     with open(TYPO_DICTIONARY_SYMSPELL_FILE, 'rb') as f:
         typo_dict = pickle.load(f)
-"""
+
 attention_words=[]
 with open(DEPENDENCY_FOLDER_PATH+ATTENTION_WORDS_FILE, 'r', encoding="utf-8") as file:
     for line in file.readlines():
@@ -73,10 +72,8 @@ def correct(string,typo_dictionary):
     corrections_dict = {}
     min_correct_len = float('inf')
     queue = sorted(list(set([string] + generate_deletes(string, threshold_levensthein))), key=len, reverse=True)
-
     while len(queue) > 0:
         q_item = queue.pop(0)
-
         if ((len(corrections_dict) > 0) and ((len(string) - len(q_item)) > min_correct_len)):
             break
         if (q_item in typo_dictionary) and (q_item not in corrections_dict):
@@ -84,9 +81,9 @@ def correct(string,typo_dictionary):
                 corrections_dict[q_item] = (typo_dictionary[q_item][1], len(string) - len(q_item))
                 if len(string) == len(q_item):
                     break
+
                 elif (len(string) - len(q_item)) < min_correct_len:
                     min_correct_len = len(string) - len(q_item)
-
             for sc_item in typo_dictionary[q_item][0]:
                 if (sc_item not in corrections_dict):
                     if len(q_item) == len(string):
@@ -107,9 +104,16 @@ def correct(string,typo_dictionary):
 
 
 def best(string,typo_dictionary):
+    for word in attention_words:
+        if damerau_levenshtein_distance(word, string) <= threshold_levensthein:
+            return word
     try:
         as_list = correct(string,typo_dictionary).items()
         outlist = sorted(as_list, key=lambda item: (item[1][1], -item[1][0]))
         return outlist[0][0]
     except:
         return string
+
+if __name__=='__main__':
+    #print(typo_dict['krdi'])
+    print(best('kiridi',typo_dict))

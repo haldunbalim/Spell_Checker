@@ -280,7 +280,7 @@ def spell_check_word(word,similiarity_threshold=0.85,latin=False,similarity_min=
             word = deascify(word)
 
     if use_manual and word in manual:
-        return manual[word][:-1]
+        return manual[word].replace('\n','')
 
     # check if correct
     if (isCorrect(word, check_buzzwords=False)):
@@ -348,10 +348,13 @@ def fix(sentence):
 
     return ' '.join(fixed_sentence)
 
-def sentence_spell_checker(sentence,fixer=True):
+def sentence_spell_checker(sentence,fixer=True,let_digits=False):
     sentence_corrected=""
     for word in my_split(sentence):
-        spell_checked=spell_check_word(word)
+        if let_digits and word.isdigit():
+            spell_checked = word
+        else:
+            spell_checked=spell_check_word(word)
         if(spell_checked != ''):
             sentence_corrected+= spell_checked+" "
 
@@ -384,5 +387,3 @@ def convert(fileIn,num_samples=500,do_all=False):
 
 if __name__ == '__main__':
     convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
-
-
