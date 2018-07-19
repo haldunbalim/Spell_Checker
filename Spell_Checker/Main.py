@@ -14,8 +14,11 @@ FREQUENCY_FILE='full.txt'
 MANUAL_FILE='manual.txt'
 BUZZWORDS_FILE='buzzwords.txt'
 SIMILARITY_MAP_FILE='similarity_typos_map.pkl'
+ATTENTION_WORDS_FILE='attention_words.txt'
 USE_PICKLE_FOR_SYMSPELL=True
+SAVE_PICKLE_SYMSPELL=False
 TYPO_DICTIONARY_SYMSPELL_FILE='/home/vircon/Desktop/trial.pkl'
+MAXIMUM_VALUE=9999999
 
 
 def make_bad_match_table(pattern):
@@ -68,21 +71,25 @@ if USE_PICKLE_FOR_SYMSPELL:
         print('It took {} seconds to load the typo dictionary for symspell'.format(tock - tick))
 else:
     tick=time.time()
-    typo_dict=build()
+    typo_dict=build(save=SAVE_PICKLE_SYMSPELL)
     tock = time.time()
     print('It took {} seconds to prepare the typo dictionary for symspell'.format(tock-tick))
 
 
 # here we load dictionary with frequencies
-file = open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r', encoding="utf-8")
 dict_with_frequencies = {}
+with open(DEPENDENCY_FOLDER_PATH+FREQUENCY_FILE, 'r', encoding="utf-8") as file:
+    for line in file.readlines():
+        word,frequency = line.split()
+        frequency=int(frequency)
+        if frequency > 15:
+            dict_with_frequencies[word] = frequency
 
-for line in file.readlines():
-    word,frequency = line.split()
-    frequency=int(frequency)
-    if frequency > 15:
-        dict_with_frequencies[word] = frequency
-file.close()
+
+with open(DEPENDENCY_FOLDER_PATH+ATTENTION_WORDS_FILE, 'r', encoding="utf-8") as file:
+    for line in file.readlines():
+        dict_with_frequencies[line[:-1]]=MAXIMUM_VALUE
+        MAXIMUM_VALUE-=1
 
 
 file = open(DEPENDENCY_FOLDER_PATH+BUZZWORDS_FILE)
@@ -323,29 +330,23 @@ def my_split(sentence,redundant='.,?:;!'):
 
 
 def fix(sentence):
-    fixed_sentence=''
     words=sentence.split()
-    last=False
-    for i in range(len(words)-1):
-        if last:
-            last=False
-            continue
-        elif words[i+1] not in ['ne','de','da'] and isCorrect(words[i]+words[i+1], check_buzzwords=False):
-            candidate=words[i]+words[i+1]
-            qs=question_suffix(candidate)
+    fixed_sentence = [words[0]]
+    cursor=0
+    for i in range(1,len(words)):
+        if words[i] not in ['ne','de','da','ki'] and isCorrect(fixed_sentence[cursor]+words[i],check_buzzwords=False):
+            candidate = fixed_sentence[cursor]+words[i]
+            qs = question_suffix(candidate)
             if qs:
-                fixed_sentence += qs+' '
+                cursor+=1
+                fixed_sentence.append(words[i])
             else:
-                fixed_sentence += candidate+' '
-            last=True
+                fixed_sentence[cursor] = candidate
         else:
-            fixed_sentence += words[i] +' '
-            last=False
-    if last:
-        return fixed_sentence[:-1]
-    else:
-        return fixed_sentence+words[-1]
+            cursor += 1
+            fixed_sentence.append(words[i])
 
+    return ' '.join(fixed_sentence)
 
 def sentence_spell_checker(sentence,fixer=True):
     sentence_corrected=""
@@ -359,32 +360,6 @@ def sentence_spell_checker(sentence,fixer=True):
     else:
         return sentence_corrected[:-1]
 
-
-def validation(fileIn,num_samples,m1,m2,name_1,name_2):
-    df=pd.read_excel(fileIn)
-    df=df['MESSAGE'][:num_samples]
-    new_frame=pd.DataFrame(columns=['Original',name_1,name_2])
-    new_frame['Original']=df
-    new_frame[name_1]=df
-    new_frame[name_2]=df
-
-
-    tick=time.time()
-    new_frame[name_1]=new_frame[name_1].apply(lambda x: m1(x))
-    tock=time.time()
-    print('It took {} seconds for m1 to convert {} sentences'.format(tock-tick,num_samples))
-
-
-    tick=time.time()
-    new_frame[name_2]=new_frame[name_2].apply(lambda x: m2(x))
-    tock = time.time()
-    print('It took {} seconds for m2 to convert {} sentences'.format(tock - tick, num_samples))
-
-
-    new_frame=new_frame[new_frame[name_1]!=new_frame[name_2]]
-    new_frame.to_excel('/home/vircon/Desktop/Comparison.xlsx')
-    print('There are {} differences'.format(len(new_frame)))
-    return new_frame
 
 def convert(fileIn,num_samples=500,do_all=False):
     df = pd.read_excel(fileIn)
@@ -409,4 +384,5 @@ def convert(fileIn,num_samples=500,do_all=False):
 
 if __name__ == '__main__':
     convert('/home/vircon/Desktop/ing bank.xls',do_all=True)
+
 

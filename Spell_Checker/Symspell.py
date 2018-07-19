@@ -4,23 +4,30 @@ from pyxdameraulevenshtein import damerau_levenshtein_distance
 
 DEPENDENCY_FOLDER_PATH='dependencies/'
 FREQUENCY_FILE='full.txt'
-
+ATTENTION_WORDS_FILE='attention_words.txt'
+MAXIMUM_VALUE=9999999
+TYPO_DICTIONARY_SYMSPELL_FILE = '/home/vircon/Desktop/trial.pkl'
 
 """
-TYPO_DICTIONARY_SYMSPELL_FILE = '/home/vircon/Desktop/trial.pkl'
 LOAD_PICKLE = False
 
 if LOAD_PICKLE:
     with open(TYPO_DICTIONARY_SYMSPELL_FILE, 'rb') as f:
         typo_dict = pickle.load(f)
 """
+attention_words=[]
+with open(DEPENDENCY_FOLDER_PATH+ATTENTION_WORDS_FILE, 'r', encoding="utf-8") as file:
+    for line in file.readlines():
+        attention_words.append(line[:-1])
+attention_words=set(attention_words)
+
 
 threshold_levensthein=2
 
 def generate_deletes(string, max_distance):
     deletes = []
     queue = [string]
-    for d in range(max_distance):
+    for _ in range(max_distance):
         temp_queue = []
         for word in queue:
             if len(word) > 1:
@@ -41,6 +48,8 @@ def build(min=15,save=False):
         for line in lines:
             w, f = line.split()
             f = int(f)
+            if w in attention_words:
+                f = MAXIMUM_VALUE
             if f > min:
                 if w in typo_dictionary:
                     typo_dictionary[w] = (typo_dictionary[w][0], f)
